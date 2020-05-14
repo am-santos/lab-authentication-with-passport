@@ -6,6 +6,23 @@ const User = require('../models/user');
 
 const passport = require('passport');
 
+// Github route handling, sign in or sign up logic is made in its strategy
+authenticationRouter.get(
+  '/github',
+  passport.authenticate('github', {
+    successRedirect: '/',
+    failureRedirect: '/error'
+  })
+);
+
+authenticationRouter.get(
+  '/github-callback',
+  passport.authenticate('github', {
+    successRedirect: '/',
+    failureRedirect: '/error'
+  })
+);
+
 authenticationRouter.get('/sign-up', (req, res, next) => {
   res.render('authentication/sign-up');
 });
@@ -29,5 +46,10 @@ authenticationRouter.post(
     failureRedirect: '/authentication/sign-in'
   })
 );
+
+authenticationRouter.post('/sign-out', (req, res, next) => {
+  req.logout();
+  res.redirect('/');
+});
 
 module.exports = authenticationRouter;
