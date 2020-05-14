@@ -10,8 +10,8 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/private', routeGuard, (req, res, next) => {
-  console.log(user);
-  res.render('authentication/private');
+  // console.log(user);
+  res.render('private');
 });
 
 module.exports = router;

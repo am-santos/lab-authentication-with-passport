@@ -13,6 +13,10 @@ const authenticationRouter = require('./routes/authentication');
 const bindUserToViewLocals = require('./middleware/bind-user-to-view-locals');
 const passport = require('passport');
 
+const mongoose = require('mongoose');
+const expressSession = require('express-session');
+const connectMongo = require('connect-mongo');
+
 const app = express();
 
 // Setup view engine
@@ -33,6 +37,23 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+app.use(
+  expressSession({
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 60 * 60 * 24 * 15,
+      sameSite: 'lax',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production'
+    },
+    store: new (connectMongo(expressSession))({
+      mongooseConnection: mongoose.connection,
+      ttl: 60 * 60 * 24
+    })
+  })
+);
 // Passport Middleware
 require('./configure-passport');
 app.use(passport.initialize());
