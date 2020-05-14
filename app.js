@@ -10,6 +10,9 @@ const serveFavicon = require('serve-favicon');
 const indexRouter = require('./routes/index');
 const authenticationRouter = require('./routes/authentication');
 
+const bindUserToViewLocals = require('./middleware/bind-user-to-view-locals');
+const passport = require('passport');
+
 const app = express();
 
 // Setup view engine
@@ -30,6 +33,14 @@ app.use(
 app.use(serveFavicon(join(__dirname, 'public/images', 'favicon.ico')));
 app.use(express.static(join(__dirname, 'public')));
 
+// Passport Middleware
+require('./configure-passport');
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(bindUserToViewLocals);
+
+// Routes
 app.use('/', indexRouter);
 app.use('/authentication', authenticationRouter);
 
